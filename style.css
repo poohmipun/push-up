@@ -1,0 +1,83 @@
+html,
+body {
+  font-family: "Prompt", sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #000;
+  font-weight: 700;
+}
+canvas {
+  display: block;
+  margin: auto;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-radius: 20px;
+  overflow: hidden;
+
+  z-index: 0;
+}
+.container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+a.button {
+  color: black;
+  background: white;
+  text-decoration: none;
+  border-radius: 20px;
+  font-family: "Prompt", sans-serif;
+  margin: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.loading {
+  margin: 0;
+  color: white;
+  font-size: 84px;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  text-align: center;
+  span {
+    display: inline-block;
+    margin: 0 -0.05em;
+  }
+}
+.loading01 {
+  span {
+    animation: loading01 1.4s infinite alternate;
+    @for $i from 0 through 6 {
+      &:nth-child(#{$i + 1}) {
+        animation-delay: #{$i * 0.1}s;
+      }
+    }
+  }
+}
+@keyframes loading01 {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+.header {
+  color: white;
+}
+.push-up {
+  padding: 10px;
+  background-color: black;
+  color: white;
+  position: fixed;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  z-index: 1;
+}

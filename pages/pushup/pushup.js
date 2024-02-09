@@ -11,6 +11,7 @@ let upPosition = false;
 let downPosition = false;
 let highlightBack = false;
 let backWarningGiven = false;
+
 const colors = {
   nose: [255, 0, 0], // Red
   left_eye: [0, 0, 255], // Blue
@@ -98,10 +99,6 @@ async function getPoses() {
 
 //set up canvas
 function draw() {
-  background(220);
-  translate(width, 0);
-  scale(-1, 1);
-
   // Add this line to show the video frame
   image(video, 0, 0, width, height); // Use width and height directly
 
@@ -142,7 +139,7 @@ function drawKeypoints() {
         circle(canvasX, canvasY, 10);
       }
       if (count == 17) {
-      /*   console.log("Whole body visible!"); */
+        /*   console.log("Whole body visible!"); */
       } else {
         /* console.log("Not fully visible!"); */
       }
@@ -188,7 +185,6 @@ function drawSkeleton() {
     }
   }
 }
-
 function updateArmAngle() {
   let wrist, shoulder, elbow;
   rightWrist = poses[0].keypoints[10];
@@ -207,7 +203,7 @@ function updateArmAngle() {
     wrist = leftWrist;
     elbow = leftElbow;
     shoulder = leftShoulder;
-    console.log("we using Left arm for counter")
+    /* console.log("we using Left arm for counter"); */
   }
   // Check if all keypoints of the right arm are visible
   else if (
@@ -218,10 +214,10 @@ function updateArmAngle() {
     wrist = rightWrist;
     elbow = rightElbow;
     shoulder = rightShoulder;
-    console.log("we using Right arm for counter")
+    //console.log("we using Right arm for counter")
   } else {
     // Both arms are not fully visible, exit the function
-    console.log("Both arms are not fully visible");
+    //console.log("Both arms are not fully visible");
     return;
   }
 
@@ -240,9 +236,10 @@ function updateArmAngle() {
 }
 
 function inUpPosition() {
-  if (elbowAngle > 120 && elbowAngle < 200) {
+  if (elbowAngle > 100 && elbowAngle < 200) {
     //console.log('In up position')
     if (downPosition == true) {
+      console.log(elbowAngle);
       var msg = new SpeechSynthesisUtterance(str(reps + 1));
       window.speechSynthesis.speak(msg);
       reps = reps + 1;
@@ -257,11 +254,11 @@ function inDownPosition() {
   if (poses[0].keypoints[0].y > poses[0].keypoints[7].y) {
     elbowAboveNose = true;
   } else {
-    //console.log('Elbow is not above nose')
+    /*  console.log("Elbow is not above nose"); */
   }
 
-  if (elbowAboveNose && abs(elbowAngle) > 70 && abs(elbowAngle) < 100) {
-    //console.log('In down position')
+  if (elbowAboveNose && abs(elbowAngle) > 0 && abs(elbowAngle) < 100) {
+    /*   console.log("In down position"); */
     downPosition = true;
     upPosition = false;
   }

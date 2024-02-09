@@ -11,7 +11,7 @@ let upPosition = false;
 let downPosition = false;
 let highlightBack = false;
 let backWarningGiven = false;
-
+let armAngle = 0; // Variable to store the arm angle
 const colors = {
   nose: [255, 0, 0], // Red
   left_eye: [0, 0, 255], // Blue
@@ -230,7 +230,7 @@ function updateArmAngle() {
   if (angle < 0) {
     //angle = angle + 360;
   }
-
+  armAngle = angle;
   elbowAngle = angle;
   /* console.log(angle); */
 }

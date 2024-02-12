@@ -49,14 +49,14 @@ async function init() {
     "7,9": "m",
     "6,8": "c",
     "8,10": "c",
-    "5,6": "y",
+    /* "5,6": "y", */
     "5,11": "m",
     "6,12": "c",
-    "11,12": "y",
+   /*  "11,12": "y", */
     "11,13": "m",
-    "13,15": "m",
+    /* "13,15": "m", */
     "12,14": "c",
-    "14,16": "c",
+    /* "14,16": "c", */
   };
   await getPoses();
 }
@@ -66,8 +66,7 @@ async function videoReady() {
 }
 
 async function setup() {
-  startTime = millis(); // Initialize start time
-  setInterval(updateFPS, interval); // Update FPS every second
+  fps = 0;
   frameRate(60);
   var w = window.innerWidth - 100;
   var h = window.innerHeight - 100;
@@ -136,22 +135,6 @@ function draw() {
   drawArmAngleGauge(width, height);
 }
 
-function updateFPS() {
-  let elapsedTime = millis() - startTime;
-  if (elapsedTime < totalTime) {
-    let currentFPS = frameRate();
-    fpsValues.push(currentFPS); // Store current FPS value
-  } else {
-    // Calculate average FPS
-    let sum = fpsValues.reduce((acc, val) => acc + val, 0);
-    let averageFPS = sum / fpsValues.length;
-    console.log("Average FPS over 1 minute:", averageFPS.toFixed(2));
-
-    // Stop updating FPS
-    clearInterval(updateFPS);
-  }
-}
-
 function updateArmAngle() {
   let wrist, shoulder, elbow;
   rightWrist = poses[0].keypoints[10];
@@ -170,7 +153,7 @@ function updateArmAngle() {
     wrist = leftWrist;
     elbow = leftElbow;
     shoulder = leftShoulder;
-    console.log("we using Left arm for counter");
+    /* console.log("we using Left arm for counter"); */
   }
   // Check if all keypoints of the right arm are visible
   else if (
@@ -181,7 +164,7 @@ function updateArmAngle() {
     wrist = rightWrist;
     elbow = rightElbow;
     shoulder = rightShoulder;
-    console.log("we using Right arm for counter");
+    //console.log("we using Right arm for counter")
   } else {
     // Both arms are not fully visible, exit the function
     //console.log("Both arms are not fully visible");
@@ -193,7 +176,7 @@ function updateArmAngle() {
     (Math.atan2(wrist.x - elbow.x, wrist.y - elbow.y) -
       Math.atan2(shoulder.x - elbow.x, shoulder.y - elbow.y)) *
     (180 / Math.PI);
-  const positiveArmAngle = angle < 0 ? 360 + angle : angle;
+
   if (angle < 0) {
     //angle = angle + 360;
   }
@@ -216,7 +199,10 @@ function isBackBending() {
     shoulder = leftShoulder;
     Hip = leftHip;
     Knee = leftKnee;
-  } else if (
+    /* console.log("we using Left arm for counter"); */
+  }
+  // Check if all keypoints of the right arm are visible
+  else if (
     rightShoulder.score > 0.3 &&
     rightHip.score > 0.3 &&
     rightKnee.score > 0.3
@@ -224,6 +210,7 @@ function isBackBending() {
     shoulder = rightShoulder;
     Hip = rightHip;
     Knee = rightKnee;
+    //console.log("we using Right arm for counter")
   } else {
     // Both arms are not fully visible, exit the function
     //console.log("Both arms are not fully visible");
@@ -240,11 +227,25 @@ function isBackBending() {
   return positiveAngle < 180; // Return true if angle is less than 180, indicating back bending
 }
 
+function calculateAverageAngle() {
+  let totalAngle = 0;
+  // Sum all angles during the down and up positions
+  for (let angle of downAngle) {
+    totalAngle += angle;
+  }
+  for (let angle of upAngle) {
+    totalAngle += angle;
+  }
+  // Calculate the average angle
+  let averageAngle = totalAngle / (downAngle.length + upAngle.length);
+  return averageAngle;
+}
+
 function inUpPosition() {
   if (elbowAngle > 150 && elbowAngle < 200) {
     //console.log('In up position')
     if (downPosition == true) {
-      /* console.log(elbowAngle); */
+      console.log(elbowAngle);
       /* var msg = new SpeechSynthesisUtterance(str(reps + 1));
         window.speechSynthesis.speak(msg); */
       reps = reps + 1;
@@ -275,14 +276,27 @@ function drawKeypoints(poses) {
     for (let kp of poses[0].keypoints) {
       const { x, y, score, name } = kp; // Added 'name' to get the keypoint name
 
+      // Exclude specified keypoints from drawing
+      if (
+        name === "nose" ||
+        name === "left_eye" ||
+        name === "right_eye" ||
+        name === "left_ear" ||
+        name === "right_ear" ||
+        name === "left_ankle" ||
+        name === "right_ankle"
+      ) {
+        continue;
+      }
+
       updateArmAngle();
       inUpPosition();
       inDownPosition();
       if (score > 0.3) {
         count = count + 1;
-        const color = colors[name];
-        fill(color);
-        stroke(0);
+        /* const color = colors[name]; */
+        fill("rgb(255,255,255)");
+        stroke(2);
         strokeWeight(1);
         // Normalize coordinates
         const normX = x / video.width;
@@ -291,7 +305,7 @@ function drawKeypoints(poses) {
         const canvasX = normX * width;
         const canvasY = normY * height;
 
-        circle(canvasX, canvasY, 10);
+        circle(canvasX, canvasY, 20);
       }
       if (count == 17) {
         /*   console.log("Whole body visible!"); */
@@ -314,10 +328,10 @@ function drawArmAngleGauge(width, height) {
   let gaugeX = width - gaugeWidth - margin;
   let gaugeY = margin;
 
-  // Draw background rectangle
+  /* // Draw background rectangle
   fill(0);
   noStroke();
-  rect(gaugeX, gaugeY, gaugeWidth, gaugeHeight);
+  rect(gaugeX, gaugeY, gaugeWidth, gaugeHeight); */
 
   // Add a class name to the gauge element
   let gaugeClassName = "arm-angle-gauge";
@@ -360,7 +374,6 @@ function drawArmAngleGauge(width, height) {
   // Return the class name for styling purposes
   return gaugeClassName;
 }
-
 function drawSkeleton(poses) {
   confidence_threshold = 0.5;
 
@@ -382,9 +395,9 @@ function drawSkeleton(poses) {
       const c2 = poses[0].keypoints[p2].score;
 
       if (c1 > confidence_threshold && c2 > confidence_threshold) {
-        strokeWeight(2);
+        strokeWeight(6);
         // Set default color
-        stroke("rgb(0, 255, 0)");
+        stroke("rgb(255, 255, 255)");
 
         // Normalize coordinates
         const normX1 = x1 / video.width;

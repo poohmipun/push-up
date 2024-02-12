@@ -39,7 +39,7 @@ a.button {
 }
 .loading {
   margin: 0;
-  color: white;
+  color: red;
   font-size: 84px;
   font-family: "Montserrat", sans-serif;
   font-weight: 800;
@@ -80,4 +80,7 @@ a.button {
   transform: translate(-50%, -50%);
   text-align: center;
   z-index: 1;
+}
+.arm-angle-gauge{
+  background-color: #000;
 }

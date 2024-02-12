@@ -4,10 +4,10 @@ let poses;
 let video;
 let skeleton = true;
 let model;
-
+let fps;
 async function init() {
   detectorConfig = {
-    modelType: poseDetection.movenet.modelType.SINGLEPOSE_THUNDER,
+    modelType: poseDetection.movenet.modelType.SINGLEPOSE_LIGHTNING,
   };
   detector = await poseDetection.createDetector(
     poseDetection.SupportedModels.MoveNet,
@@ -37,6 +37,8 @@ async function videoReady() {
 let loader;
 
 async function setup() {
+  fps = 0;
+  frameRate(60);
   var w = window.innerWidth - 100;
   var h = window.innerHeight - 100;
 
@@ -71,13 +73,13 @@ async function getPoses() {
 }
 
 function draw() {
-  background(220);
-  translate(width, 0);
-  scale(-1, 1);
-
   // Add this line to show the video frame
   image(video, 0, 0, width, height); // Use width and height directly
-
+  fps = frameRate();
+  fill(0, 255, 0);
+  textSize(32);
+  stroke(0);
+  text("FPS: " + fps.toFixed(2), 100, 50);
   // Draw keypoints and skeleton
   drawKeypoints();
   if (skeleton) {
